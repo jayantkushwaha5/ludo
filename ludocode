@@ -1,1 +1,1032 @@
+function cust_MouseMove() {}
 
+function cust_MouseDown() {}
+
+function cust_KeyDown() {}
+
+//Global variables and arrays/objects...
+var c_boost = ["B5", "B2", "B6", "B3", "B7", "B4", "B8"];
+var dice_val = 0;
+var real_dice = 0;
+var bonus = 0;
+var c_cor_ans_p1 = 0;
+var c_cor_ans_p2 = 0;
+var c_cor_ans_p3 = 0;
+var c_cor_ans_p4 = 0;
+var game_start = 0,
+    curr_player = "p1";
+var ranNum, new_pos, curr_pos, r_step, diff = 0,
+    i_step = 0;
+var c_bool = 0;
+var immortal = 0;
+var ot_pawn1, ot_pawn2, ot_pawn3;
+var first_ipos, sec_ipos, third_ipos, fourth_ipos;
+var temp_pos, obj, pntr = 0,
+    count = 0;
+var p_repeater = 1;
+var p1_inc = 0;
+var p2_inc = 0;
+var p3_inc = 0;
+var p4_inc = 0;
+var c_check = true;
+var c_playerMove = true;
+var immortal_pos = ["H3", "H12", "H17", "H25", "H30", "H38", "H43", "H51", "H60"];
+
+var yellow_dots = [{ "obj": "B18", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B19", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B20", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B21", "open": 0, "position": "", "finished": 0, "dis": 57 }
+];
+
+var red_dots = [{ "obj": "B22", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B23", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B24", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B25", "open": 0, "position": "", "finished": 0, "dis": 57 }
+];
+
+var green_dots = [{ "obj": "B27", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B28", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B29", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B30", "open": 0, "position": "", "finished": 0, "dis": 57 }
+];
+
+var blue_dots = [{ "obj": "B31", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B32", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B33", "open": 0, "position": "", "finished": 0, "dis": 57 },
+    { "obj": "B34", "open": 0, "position": "", "finished": 0, "dis": 57 }
+];
+
+var yellow_iniPos = [
+    [439, 60],
+    [524, 60],
+    [439, 140],
+    [524, 140]
+];
+var red_iniPos = [
+    [85, 414],
+    [170, 414],
+    [85, 494],
+    [170, 494]
+];
+var green_iniPos = [
+    [439, 414],
+    [524, 414],
+    [439, 494],
+    [524, 494]
+];
+var blue_iniPos = [
+    [85, 60],
+    [85, 140],
+    [170, 140],
+    [170, 60]
+];
+
+var c_getPlayersNo = 2;
+var p_indicator = [];
+
+//Select no. of Players and color code...
+var ranNum, c_sum = 0,
+    c_maxPlayer = 2,
+    c_selectPlayerCount = 0,
+    c_avatar = "",
+    c_avatarName = "",
+    c_isRestart = true;
+
+var c_selectColor = [{ 'btn': "B67", 'isUse': "No", 'avatarName': "", 'tvColor': "bluetv", 'sno': '', 'isWin': 'No' },
+    { 'btn': "B68", 'isUse': "No", 'avatarName': "", 'tvColor': "redtv", 'sno': '', 'isWin': 'No' },
+    { 'btn': "B69", 'isUse': "No", 'avatarName': "", 'tvColor': "greentv", 'sno': '', 'isWin': 'No' },
+    { 'btn': "B70", 'isUse': "No", 'avatarName': "", 'tvColor': "yellowtv", 'sno': '', 'isWin': 'No' }
+];
+
+function cust_enbleBtn() {
+    if (c_isRestart) {
+        _stage.C8.B67.enable();
+        _stage.C8.B68.enable();
+        _stage.C8.B69.enable();
+        _stage.C8.B70.enable();
+    }
+}
+
+function cust_maxPlayer(r, e, ply) {
+    c_maxPlayer = ply;
+    if (c_maxPlayer == 2) {
+        if (c_selectPlayerCount == 2)
+            _stage.C8.goToLabel("ply");
+    }
+    if (c_maxPlayer == 4) {
+        if (c_selectPlayerCount < 4)
+            _stage.C8.goToLabel("start");
+    }
+}
+
+function cust_ChooseAvatar(ref, e, str) {
+    c_avatarName = str.split("|");
+    c_avatar = ref.layerID;
+    if (c_selectPlayerCount < c_maxPlayer) {
+        _stage.C8.goToLabel("select_color");
+    }
+}
+
+function cust_selectPlayerColor(r, e, clr) {
+    var clr_arr = clr.split("|");
+    var b_id = r.layerID;
+    c_selectPlayerCount++;
+    c_isRestart = false;
+    for (var i = 0; i < 4; i++) {
+        if (b_id == c_selectColor[i].btn) {
+            c_selectColor[i].isUse = "Yes";
+            c_selectColor[i].avatarName = c_avatarName[0];
+            c_selectColor[i].sno = c_selectPlayerCount;
+        }
+    }
+    _stage.C8[c_avatar].swapImage(clr_arr[0]);
+    _stage.C8[clr_arr[1]].disable();
+    _stage.C8[c_avatarName[1]].setContent("Player" + c_selectPlayerCount);
+    if (c_selectPlayerCount == 3) _stage.C8.B15.disable();
+    if (c_selectPlayerCount == c_maxPlayer) {
+        _stage.C8.goToLabel("ply");
+        if (c_maxPlayer == 2)
+            _stage.C8.B66.disable();
+    } else _stage.C8.goToLabel('start');
+}
+
+function cust_chooseTVColorPlayer2(ref) {
+    for (var i = 0; i < 4; i++) {
+        if (c_selectColor[i].isUse == "Yes") {
+            if (c_selectColor[i].sno == 1) {
+                ref.i37.swapImage(c_selectColor[i].tvColor + '1');
+                ref.i39.swapImage(c_selectColor[i].avatarName);
+            }
+            if (c_selectColor[i].sno == 2) {
+                ref.i38.swapImage(c_selectColor[i].tvColor + '2');
+                ref.i40.swapImage(c_selectColor[i].avatarName);
+            }
+        }
+    }
+}
+
+function cust_chooseTVColorPlayer4(ref) {
+    for (var i = 0; i < 4; i++) {
+        if (c_selectColor[i].isUse == "Yes") {
+            if (c_selectColor[i].sno == 1) {
+                ref.i61.swapImage(c_selectColor[i].tvColor + '1');
+                ref.i62.swapImage(c_selectColor[i].avatarName);
+            }
+            if (c_selectColor[i].sno == 2) {
+                ref.i63.swapImage(c_selectColor[i].tvColor + '2');
+                ref.i64.swapImage(c_selectColor[i].avatarName);
+            }
+            if (c_selectColor[i].sno == 3) {
+                ref.i65.swapImage(c_selectColor[i].tvColor + '3');
+                ref.i66.swapImage(c_selectColor[i].avatarName);
+            }
+            if (c_selectColor[i].sno == 4) {
+                ref.i67.swapImage(c_selectColor[i].tvColor + '4');
+                ref.i71.swapImage(c_selectColor[i].avatarName);
+            }
+        }
+    }
+}
+
+function cust_showColorBtn() {
+    for (var i = 0; i < 4; i++) {
+        if (c_selectColor[i].isUse == "No") {
+            _stage.C8[c_selectColor[i].btn].enable();
+        } else {
+            _stage.C8[c_selectColor[i].btn].disable();
+        }
+    }
+}
+//end...
+
+//Render and show selected pawns...
+var player_color = [];
+
+function cust_showselectedPawns() {
+    var p_col;
+    for (var j = 0; j < 4; j++) {
+        _stage.C7[yellow_dots[j].obj].setRendering(0);
+        _stage.C7[red_dots[j].obj].setRendering(0);
+        _stage.C7[blue_dots[j].obj].setRendering(0);
+        _stage.C7[green_dots[j].obj].setRendering(0);
+    }
+    for (var i = 0; i < 4; i++) {
+        if (c_selectColor[i].isUse == "Yes") {
+            if (c_selectColor[i].sno == 1 || c_selectColor[i].sno == 2 || c_selectColor[i].sno == 3 || c_selectColor[i].sno == 4) {
+                var c_pos = c_selectColor[i].sno - 1;
+                p_col = c_selectColor[i].tvColor;
+                p_col = p_col.slice(0, -2);
+                player_color[c_pos] = p_col;
+                for (var k = 0; k < 4; k++) {
+                    if (c_selectColor[i].tvColor == "bluetv")
+                        _stage.C7[blue_dots[k].obj].setRendering(1);
+                    else if (c_selectColor[i].tvColor == "redtv")
+                        _stage.C7[red_dots[k].obj].setRendering(1);
+                    else if (c_selectColor[i].tvColor == "greentv")
+                        _stage.C7[green_dots[k].obj].setRendering(1);
+                    else if (c_selectColor[i].tvColor == "yellowtv")
+                        _stage.C7[yellow_dots[k].obj].setRendering(1);
+                }
+            }
+        }
+    }
+}
+//end...
+
+//On page load reset all variables...
+function cust_PageLoaded() {
+    pntr = 0;
+    count = 0;
+    bonus = 0;
+    p1_inc = 0;
+    p2_inc = 0;
+    p3_inc = 0;
+    p4_inc = 0;
+    c_cor_ans_p1 = 0;
+    c_cor_ans_p2 = 0;
+    c_cor_ans_p3 = 0;
+    c_cor_ans_p4 = 0;
+    dice_val = 0;
+    p_repeater = 1;
+    game_start = 0;
+    p_indicator = [];
+    c_isRestart = true;
+    c_sum = 0;
+    c_avatar = "";
+    c_selectPlayerCount = 0;
+    c_avatarName = "";
+    c_maxPlayer = 2;
+    player_color = [];
+}
+//end...
+
+//Start game...
+function cust_startGame() {
+    _stage.goToLabel("game");
+    if (c_maxPlayer == 2) {
+        p_indicator = ["p1", "p2"];
+        _stage.C10.goToLabel("p1");
+    } else if (c_maxPlayer == 4) {
+        p_indicator = ["p1", "p2", "p3", "p4"];
+        _stage.C12.goToLabel("p1");
+    }
+    f_log(c_selectColor);
+}
+//end...
+
+//Dice anim and output management...
+function cust_rollDice(ref) {
+    immortal = 0;
+    var sn = [1, 6];
+    if ((ranNum == 6 && _stage.C5.currentLabel() == "player_move") || (c_bool == 1)) {
+        if (c_check == false) {
+            if (ranNum == 6) ranNum = 1;
+            else {
+                ranNum = _util.getRandom(0, 1);
+                ranNum = sn[ranNum];
+            }
+        } else ranNum = _util.getRandom(1, 5);
+        _stage.L10.setContent("");
+        ref.goToLabel("dice_output");
+        c_bool = 0;
+        cust_activePawn();
+    } else {
+        if (c_check == false) {
+            ranNum = _util.getRandom(0, 1);
+            ranNum = sn[ranNum];
+        } else ranNum = _util.getRandom(1, 6);
+        ref.i4.swapImage("dice_" + ranNum);
+    }
+}
+
+function cust_diceOutput(ref) {
+    ref.i4.swapImage("dice_" + ranNum);
+    dice_val = ranNum;
+    real_dice = ranNum;
+    _stage.C4.L11.setContent("");
+    _stage.C4.L12.setContent("");
+    if (bonus == 1) _stage.C3.goToLabel("bonus");
+}
+//end...
+
+//Fecth quiz data, show and set correct answers...
+function cust_tableData() {
+    obj = _stage.T1.records.data;
+    console.log(obj);
+}
+
+function cust_quiz(ref) {
+    ref.L2.setContent(obj[pntr][0]);
+    ref.B10.setContent(obj[pntr][1]);
+    ref.B11.setContent(obj[pntr][2]);
+    ref.B12.setContent(obj[pntr][3]);
+    ref.B13.setContent(obj[pntr][4]);
+    ref.i3.swapImage('question_player_' + curr_player);
+}
+
+function cust_setCorrect(ref) {
+    var i = 0;
+    i = obj[pntr][5];
+    i = parseInt(i, 10);
+    i = i;
+    ref["opt_" + 1].iscorrect = 0;
+    ref["opt_" + 2].iscorrect = 0;
+    ref["opt_" + 3].iscorrect = 0;
+    ref["opt_" + 4].iscorrect = 0;
+    ref["opt_" + i].iscorrect = 1;
+}
+//end...
+
+//Increament of questions and set currect player...
+function cust_inpntr() {
+    c_playerMove = true;
+    count++;
+    if (count < obj.length) {
+        pntr++;
+    } else {
+        pntr = 0;
+        count = 0;
+    }
+    _stage.C4.L11.setContent("");
+    _stage.C4.L12.setContent("");
+    _stage.goToLabel("game");
+    _stage.C5.goToLabel("q");
+    _stage.C4.B26.hide();
+    _stage.C2.B9.enable();
+    _stage.L10.setContent("");
+    _stage.C3.goToLabel("blank");
+    curr_player = p_indicator[p_repeater];
+    if (c_maxPlayer == 2) _stage.C10.goToLabel(curr_player);
+    else _stage.C12.goToLabel(curr_player);
+    p_repeater++;
+    if (p_repeater >= p_indicator.length) p_repeater = 0;
+}
+//end...
+
+//check player move if give correct ans on first attemp...
+function cust_checkPlayerMoveOrNot() {
+    if (c_playerMove) {
+        _stage.C5.goToLabel("player_move")
+    } else {
+        _stage.C5.goToLabel("player_not_move")
+    }
+}
+//end...
+
+//Check correct and incorrect answers and Manage which pawns are active or inactive...
+var c_palyerColor = "";
+
+function cust_checkPawnOpen() {
+    for (var i = 0; i < 4; i++) {
+        if (act_pawns[i].open == 1 && act_pawns[i].finished == 0) {
+            return true;
+        } else return false;
+    }
+}
+
+function cust_correct() {
+    if (curr_player == "p1") {
+        if (player_color[0] == "red") act_pawns = red_dots;
+        if (player_color[0] == "blue") act_pawns = blue_dots;
+        if (player_color[0] == "green") act_pawns = green_dots;
+        if (player_color[0] == "yellow") act_pawns = yellow_dots;
+        c_palyerColor = player_color[0];
+    }
+    if (curr_player == "p2") {
+        if (player_color[1] == "red") act_pawns = red_dots;
+        if (player_color[1] == "blue") act_pawns = blue_dots;
+        if (player_color[1] == "green") act_pawns = green_dots;
+        if (player_color[1] == "yellow") act_pawns = yellow_dots;
+        c_palyerColor = player_color[1];
+    }
+    if (curr_player == "p3") {
+        if (player_color[2] == "red") act_pawns = red_dots;
+        if (player_color[2] == "blue") act_pawns = blue_dots;
+        if (player_color[2] == "green") act_pawns = green_dots;
+        if (player_color[2] == "yellow") act_pawns = yellow_dots;
+        c_palyerColor = player_color[2];
+    }
+    if (curr_player == "p4") {
+        if (player_color[3] == "red") act_pawns = red_dots;
+        if (player_color[3] == "blue") act_pawns = blue_dots;
+        if (player_color[3] == "green") act_pawns = green_dots;
+        if (player_color[3] == "yellow") act_pawns = yellow_dots;
+        c_palyerColor = player_color[3];
+    }
+    var sn = [1, 6];
+    c_check = cust_checkPawnOpen();
+    bonus = 1;
+    if (c_playerMove) {
+        if (curr_player == "p1") {
+            c_cor_ans_p1++;
+            if (p1_inc < 7) p1_inc++;
+            if (c_cor_ans_p1 === 1) {
+                ranNum = _util.getRandom(0, 1);
+                ranNum = sn[ranNum];
+            } else {
+                if (c_check == true) ranNum = _util.getRandom(1, 6);
+                else {
+                    ranNum = _util.getRandom(0, 1);
+                    ranNum = sn[ranNum];
+                }
+            }
+        }
+        if (curr_player == "p2") {
+            c_cor_ans_p2++;
+            if (p2_inc < 7) p2_inc++;
+            if (c_cor_ans_p2 === 1) {
+                ranNum = _util.getRandom(0, 1);
+                ranNum = sn[ranNum];
+            } else {
+                if (c_check == true) ranNum = _util.getRandom(1, 6);
+                else {
+                    ranNum = _util.getRandom(0, 1);
+                    ranNum = sn[ranNum];
+                }
+            }
+        }
+        if (curr_player == "p3") {
+            c_cor_ans_p3++;
+            if (p3_inc < 7) p3_inc++;
+            if (c_cor_ans_p3 === 1) {
+                ranNum = _util.getRandom(0, 1);
+                ranNum = sn[ranNum];
+            } else {
+                if (c_check == true) ranNum = _util.getRandom(1, 6);
+                else {
+                    ranNum = _util.getRandom(0, 1);
+                    ranNum = sn[ranNum];
+                }
+            }
+        }
+        if (curr_player == "p4") {
+            c_cor_ans_p4++;
+            if (p4_inc < 7) p4_inc++;
+            if (c_cor_ans_p4 === 1) {
+                ranNum = _util.getRandom(0, 1);
+                ranNum = sn[ranNum];
+            } else {
+                if (c_check == true) ranNum = _util.getRandom(1, 6);
+                else {
+                    ranNum = _util.getRandom(0, 1);
+                    ranNum = sn[ranNum];
+                }
+            }
+        }
+        cust_activePawn();
+    }
+    _stage.C4.goToLabel("dice_output");
+}
+
+function cust_incorrect() {
+    bonus = 0;
+    c_playerMove = false;
+    _stage.C3.goToLabel("blank");
+    ranNum = _util.getRandom(2, 4);
+    _stage.C4.goToLabel("dice_output");
+    if (curr_player == "p1") {
+        if (p1_inc > 0) p1_inc--;
+    }
+    if (curr_player == "p2") {
+        if (p2_inc > 0) p2_inc--;
+    }
+    if (curr_player == "p3") {
+        if (p3_inc > 0) p3_inc--;
+    }
+    if (curr_player == "p4") {
+        if (p4_inc > 0) p4_inc--;
+    }
+}
+
+var act_pawns;
+
+function cust_activePawn() {
+    for (var j = 0; j < 4; j++) {
+        if ((ranNum == 1 || ranNum == 6) && (act_pawns[j].open == 0)) {
+            if (act_pawns[j].finished == 0 && dice_val < act_pawns[j].dis) {
+                _stage.C7[act_pawns[j].obj].enable();
+                _stage.C7[act_pawns[j].obj].style.zIndex = "1";
+                _stage.L10.setContent("Click on " + c_palyerColor + " pawn(s) to move.");
+            }
+        } else {
+            if (act_pawns[j].open == 1 && act_pawns[j].finished == 0 && ranNum < act_pawns[j].dis) {
+                _stage.C7[act_pawns[j].obj].enable();
+                _stage.C7[act_pawns[j].obj].style.zIndex = "1";
+                _stage.L10.setContent("Click on " + c_palyerColor + " pawn(s) to move.");
+            } else {
+                _stage.C7[act_pawns[j].obj].disable();
+            }
+        }
+    }
+    i_step = 0;
+    c_check = true;
+}
+//end...
+
+//Manage player bonus buttons active or inactive...
+function cust_playerBonus() {
+    var i, j;
+    _stage.C3.op_grp.resetGroup();
+    _stage.C3.B1.enable();
+    for (i = 0; i < c_boost.length; i++) {
+        _stage.C3[c_boost[i]].disable();
+    }
+    if (curr_player == "p1") {
+        if (p1_inc > 0) {
+            for (j = 0; j < p1_inc; j++) {
+                _stage.C3[c_boost[j]].enable();
+            }
+        }
+    }
+    if (curr_player == "p2") {
+        if (p2_inc > 0) {
+            for (j = 0; j < p2_inc; j++) {
+                _stage.C3[c_boost[j]].enable();
+            }
+        }
+    }
+    if (curr_player == "p3") {
+        if (p3_inc > 0) {
+            for (j = 0; j < p3_inc; j++) {
+                _stage.C3[c_boost[j]].enable();
+            }
+        }
+    }
+    if (curr_player == "p4") {
+        if (p4_inc > 0) {
+            for (j = 0; j < p4_inc; j++) {
+                _stage.C3[c_boost[j]].enable();
+            }
+        }
+    }
+    if (real_dice == 1) _stage.C3[c_boost[1]].disable();
+
+}
+//end...
+
+//Path of pawns, pawns movement control and bonus chance...
+var g_pos = ["H30", "H31", "H32", "H33", "H34", "H35", "H36", "H37", "H38", "H39", "H40", "H41", "H42", "H43", "H44", "H45",
+    "H46", "H47", "H48", "H49", "H50", "H51", "H52", "H53", "H54", "H4", "H3", "H5", "H6", "H7", "H8", "H9", "H10", "H11", "H12",
+    "H13", "H14", "H15", "H16", "H17", "H18", "H19", "H20", "H21", "H22", "H23", "H24", "H25", "H26", "H27", "H29", "H75", "H74",
+    "H73", "H72", "H71", "H60"
+];
+var b_pos = ["H3", "H5", "H6", "H7", "H8", "H9", "H10", "H11", "H12", "H13", "H14", "H15", "H16", "H17", "H18", "H19", "H20",
+    "H21", "H22", "H23", "H24", "H25", "H26", "H27", "H29", "H28", "H30", "H31", "H32", "H33", "H34", "H35", "H36", "H37", "H38",
+    "H39", "H40", "H41", "H42", "H43", "H44", "H45", "H46", "H47", "H48", "H49", "H50", "H51", "H52", "H53", "H54", "H55", "H56",
+    "H57", "H58", "H59", "H60"
+];
+var y_pos = ["H17", "H18", "H19", "H20", "H21", "H22", "H23", "H24", "H25", "H26", "H27", "H29", "H28", "H30", "H31", "H32",
+    "H33", "H34", "H35", "H36", "H37", "H38", "H39", "H40", "H41", "H42", "H43", "H44", "H45", "H46", "H47", "H48", "H49", "H50",
+    "H51", "H52", "H53", "H54", "H4", "H3", "H5", "H6", "H7", "H8", "H9", "H10", "H11", "H12", "H13", "H14", "H15", "H65", "H64",
+    "H63", "H62", "H61", "H60"
+];
+var r_pos = ["H43", "H44", "H45", "H46", "H47", "H48", "H49", "H50", "H51", "H52", "H53", "H54", "H4", "H3", "H5", "H6", "H7",
+    "H8", "H9", "H10", "H11", "H12", "H13", "H14", "H15", "H16", "H17", "H18", "H19", "H20", "H21", "H22", "H23", "H24", "H25",
+    "H26", "H27", "H29", "H28", "H30", "H31", "H32", "H33", "H34", "H35", "H36", "H37", "H38", "H39", "H40", "H41", "H66", "H67",
+    "H68", "H69", "H70", "H60"
+];
+
+function cust_movePawn(ref) {
+    if (act_pawns == yellow_dots) {
+        temp_pos = y_pos;
+        ot_pawn1 = red_dots;
+        ot_pawn2 = green_dots;
+        ot_pawn3 = blue_dots;
+        first_ipos = yellow_iniPos;
+        sec_ipos = red_iniPos;
+        third_ipos = green_iniPos;
+        fourth_ipos = blue_iniPos;
+    }
+    if (act_pawns == red_dots) {
+        temp_pos = r_pos;
+        ot_pawn1 = yellow_dots;
+        ot_pawn2 = green_dots;
+        ot_pawn3 = blue_dots;
+        first_ipos = red_iniPos;
+        sec_ipos = yellow_iniPos;
+        third_ipos = green_iniPos;
+        fourth_ipos = blue_iniPos;
+    }
+    if (act_pawns == green_dots) {
+        temp_pos = g_pos;
+        ot_pawn1 = yellow_dots;
+        ot_pawn2 = red_dots;
+        ot_pawn3 = blue_dots;
+        first_ipos = green_iniPos;
+        sec_ipos = yellow_iniPos;
+        third_ipos = red_iniPos;
+        fourth_ipos = blue_iniPos;
+    }
+    if (act_pawns == blue_dots) {
+        temp_pos = b_pos;
+        ot_pawn1 = yellow_dots;
+        ot_pawn2 = red_dots;
+        ot_pawn3 = green_dots;
+        first_ipos = blue_iniPos;
+        sec_ipos = yellow_iniPos;
+        third_ipos = red_iniPos;
+        fourth_ipos = green_iniPos;
+    }
+    ref.sizeTo(31, 31, 1000, "ease-in");
+    var index = act_pawns.map(e => e.obj).indexOf(ref.layerID);
+    if ((ranNum == 1 || ranNum == 6) && act_pawns[index].open == 0) {
+        for (var b = 0; b < 4; b++) {
+            if (ref.offsetLeft == first_ipos[b][0] && ref.offsetTop == first_ipos[b][1]) {
+                ref.moveTo(_stage.C6[temp_pos[0]].offsetLeft, _stage.C6[temp_pos[0]].offsetTop, 1000, "ease-in");
+                act_pawns[index].position = temp_pos[0];
+                act_pawns[index].open = 1;
+                act_pawns[index].dis = 56;
+                cust_calPlayerPercentage();
+                if (real_dice == 6) cust_getBonusChance();
+                else cust_inpntr();
+                setTimeout(function() { cust_highShow(ref) }, 1005);
+            }
+        }
+    } else {
+        curr_pos = temp_pos.indexOf(act_pawns[index].position);
+        r_step = setInterval(function() {
+            if (i_step < dice_val) {
+                i_step++;
+                new_pos = i_step + curr_pos;
+                ref.moveTo(_stage.C6[temp_pos[new_pos]].offsetLeft, _stage.C6[temp_pos[new_pos]].offsetTop, 250, "ease-in");
+            } else {
+                clearInterval(r_step);
+                act_pawns[index].position = temp_pos[new_pos];
+                diff = temp_pos.length - new_pos;
+                act_pawns[index].dis = diff;
+                for (var r = 0; r < 9; r++) {
+                    if (temp_pos[new_pos] == immortal_pos[r]) {
+                        immortal = 1;
+                    }
+                }
+                if (temp_pos[new_pos] == "H60") {
+                    act_pawns[index].finished = 1;
+                    setTimeout(function() { cust_highShow(ref) }, 100);
+                    cust_calPlayerPercentage();
+                    cust_findWinner();
+                    return;
+                }
+                if (immortal == 0) {
+                    for (var p = 0; p < 4; p++) {
+                        if ((ot_pawn1[p].position == temp_pos[new_pos]) && (ot_pawn1[p].finished == 0)) {
+                            _stage.C7[ot_pawn1[p].obj].moveTo(sec_ipos[p][0], sec_ipos[p][1], 1000, "ease-in");
+                            ot_pawn1[p].open = 0;
+                            ot_pawn1[p].position = "";
+                            ot_pawn1[p].dis = 57;
+                            _stage.C7[ot_pawn1[p].obj].sizeTo(58, 59, 1000, "ease-in");
+                            cust_calPlayerPercentage();
+                            cust_getBonusChance();
+                            c_bool = 1;
+                            return;
+                        }
+                        if ((ot_pawn2[p].position == temp_pos[new_pos]) && (ot_pawn2[p].finished == 0)) {
+                            _stage.C7[ot_pawn2[p].obj].moveTo(third_ipos[p][0], third_ipos[p][1], 1000, "ease-in");
+                            ot_pawn2[p].open = 0;
+                            ot_pawn2[p].position = "";
+                            ot_pawn2[p].dis = 57;
+                            _stage.C7[ot_pawn2[p].obj].sizeTo(58, 59, 1000, "ease-in");
+                            cust_calPlayerPercentage();
+                            cust_getBonusChance();
+                            c_bool = 1;
+                            return;
+                        }
+                        if ((ot_pawn3[p].position == temp_pos[new_pos]) && (ot_pawn3[p].finished == 0)) {
+                            _stage.C7[ot_pawn3[p].obj].moveTo(fourth_ipos[p][0], fourth_ipos[p][1], 1000, "ease-in");
+                            ot_pawn3[p].open = 0;
+                            ot_pawn3[p].position = "";
+                            ot_pawn3[p].dis = 57;
+                            _stage.C7[ot_pawn3[p].obj].sizeTo(58, 59, 1000, "ease-in");
+                            cust_calPlayerPercentage();
+                            cust_getBonusChance();
+                            c_bool = 1;
+                            return;
+                        }
+                    }
+                }
+                setTimeout(function() { cust_highShow(ref) }, 100);
+                cust_calPlayerPercentage();
+                if (real_dice == 6) cust_getBonusChance();
+                else cust_inpntr();
+            }
+        }, 300);
+    }
+    for (var j = 0; j < 4; j++) {
+        _stage.C7[act_pawns[j].obj].disable();
+        _stage.C7[act_pawns[j].obj].style.zIndex = "0";
+    }
+    _stage.C4.B26.hide();
+}
+
+function cust_getBonusChance() {
+    _stage.L10.setContent("Roll a dice once again!");
+    _stage.C2.B9.enable();
+    _stage.C3.goToLabel("blank");
+    c_check = cust_checkPawnOpen();
+}
+//end...
+
+//Calculation of operator box...
+var c_op = "";
+var c_num = 0;
+var c_operators = [
+    ["B1", "&#43;"],
+    ["B2", "&#8722;"],
+    ["B3", "&#215;"],
+    ["B4", "&#247;"]
+];
+var c_numbers = ["B5", "B6", "B7", "B8"];
+var str = "";
+
+function cust_selectionNumOpt(ref) {
+    if (ref.layerID == "B1" || ref.layerID == "B2" || ref.layerID == "B3" || ref.layerID == "B4") {
+        _stage.C3.num_grp.resetGroup();
+        c_op = ref.layerID;
+        for (var i = 0; i < 4; i++) {
+            if (ref.layerID != c_operators[i][0]) {
+                _stage.C3[c_operators[i][0]].disable();
+            } else {
+                str = c_operators[i][1];
+            }
+        }
+        if (c_op == "B2") {
+            for (var x = real_dice - 1; x < 4; x++) {
+                _stage.C3[c_numbers[x]].disable();
+            }
+        }
+        if (c_op == "B4") {
+            for (var k = 0; k < 4; k++) {
+                _stage.C3[c_numbers[k]].disable();
+            }
+            if (dice_val == 1 || dice_val == 5) _stage.C3[c_numbers[0]].enable();
+            if (dice_val == 2) {
+                _stage.C3[c_numbers[0]].enable();
+                _stage.C3[c_numbers[1]].enable();
+            }
+            if (dice_val == 3) {
+                _stage.C3[c_numbers[0]].enable();
+                _stage.C3[c_numbers[2]].enable();
+            }
+            if (dice_val == 4) {
+                _stage.C3[c_numbers[0]].enable();
+                _stage.C3[c_numbers[1]].enable();
+                _stage.C3[c_numbers[3]].enable();
+            }
+            if (dice_val == 6) {
+                _stage.C3[c_numbers[0]].enable();
+                _stage.C3[c_numbers[1]].enable();
+                _stage.C3[c_numbers[2]].enable();
+            }
+        }
+    }
+    if (ref.layerID == "B5" || ref.layerID == "B6" || ref.layerID == "B7" || ref.layerID == "B8") {
+        if (c_op != "") {
+            c_num = ref.layerName;
+            c_num = parseInt(c_num, 10);
+            for (var j = 0; j < 4; j++) {
+                if (ref.layerID != c_numbers[j]) {
+                    _stage.C3[c_numbers[j]].disable();
+                }
+            }
+        } else {
+            alert("Please select any active operator button first.");
+        }
+    }
+    if (c_op == "B1" && c_num != 0) dice_val = real_dice + c_num;
+    if (c_op == "B2" && c_num != 0) dice_val = real_dice - c_num;
+    if (c_op == "B3" && c_num != 0) dice_val = real_dice * c_num;
+    if (c_op == "B4" && c_num != 0) dice_val = real_dice / c_num;
+    if (c_num != 0) {
+        ranNum = dice_val;
+        _stage.C4.L11.setContent(str + "&nbsp" + c_num);
+        _stage.C4.L12.setContent("&#61;&nbsp;" + dice_val);
+        _stage.C4.B26.show();
+        cust_activePawn();
+        str = "";
+        c_op = "";
+        c_num = 0;
+    }
+}
+
+function cust_resetCalc(ref) {
+    ranNum = real_dice;
+    _stage.C4.L11.setContent("");
+    _stage.C4.L12.setContent("");
+    cust_activePawn();
+    cust_playerBonus();
+    ref.hide();
+}
+
+function cust_runPlayerBonus() {
+    if (curr_player == "p1") {
+        if (c_cor_ans_p1 > 1) cust_playerBonus();
+    }
+    if (curr_player == "p2") {
+        if (c_cor_ans_p2 > 1) cust_playerBonus();
+    }
+    if (curr_player == "p3") {
+        if (c_cor_ans_p3 > 1) cust_playerBonus();
+    }
+    if (curr_player == "p4") {
+        if (c_cor_ans_p4 > 1) cust_playerBonus();
+    }
+}
+//end...
+
+//Calculate player percentage on ludo board...
+/*function cust_calPlayerPercentage() {
+    var c_prog = 0;
+    for (var i = 0; i < 4; i++) {
+        c_prog += 57 - act_pawns[i].dis;
+    }
+    var all_pawns = act_pawns.every(cust_checkAllfinished);
+    var c_pper = (c_prog / 228) * 100;
+    c_pper = c_pper.toFixed(2);
+    if (all_pawns == true) c_pper = 100;
+    if (c_maxPlayer == 2) {
+        if (curr_player == "p1") _stage.C10.L6.setContent(c_pper + "%");
+        if (curr_player == "p2") _stage.C10.L7.setContent(c_pper + "%");
+    }
+    if (c_maxPlayer == 4) {
+        if (curr_player == "p1") _stage.C12.L8.setContent(c_pper + "%");
+        if (curr_player == "p2") _stage.C12.L9.setContent(c_pper + "%");
+        if (curr_player == "p3") _stage.C12.L13.setContent(c_pper + "%");
+        if (curr_player == "p4") _stage.C12.L14.setContent(c_pper + "%");
+    }
+}*/
+//end..
+
+//Calculate player percentage based on no. of correct answer...
+function cust_calPlayerPercentage() {
+    if (c_maxPlayer == 2) {
+        if (curr_player == "p1") _stage.C10.L6.setContent(c_cor_ans_p1 + "%");
+        if (curr_player == "p2") _stage.C10.L7.setContent(c_cor_ans_p2 + "%");
+    }
+    if (c_maxPlayer == 4) {
+        if (curr_player == "p1") _stage.C12.L8.setContent(c_cor_ans_p1 + "%");
+        if (curr_player == "p2") _stage.C12.L9.setContent(c_cor_ans_p2 + "%");
+        if (curr_player == "p3") _stage.C12.L13.setContent(c_cor_ans_p3 + "%");
+        if (curr_player == "p4") _stage.C12.L14.setContent(c_cor_ans_p4 + "%");
+    }
+}
+//end...
+
+//Evaluate winner...
+function cust_findWinner() {
+    var win_count = act_pawns.every(cust_checkAllfinished);
+    if (win_count == true) {
+        _stage.C5.goToLabel("game_over");
+    } else {
+        cust_getBonusChance();
+        c_bool = 1;
+    }
+}
+
+function cust_checkAllfinished(el) {
+    return el.finished == 1;
+}
+
+var c_sn;
+
+function cust_displaywinner() {
+    _stage.C5.i78.swapImage(curr_player);
+    c_sn = curr_player;
+    c_sn = c_sn.substr(1);
+    c_sn = parseInt(c_sn);
+    for (var i = 0; i < 4; i++) {
+        if (c_selectColor[i].sno == c_sn) {
+            _stage.C5.i83.swapImage(c_selectColor[i].avatarName);
+        }
+    }
+}
+//end...
+
+//Check and positioned same pawns at same position...
+var c_xyDelta = [
+    [-7, -7],
+    [-7, 7],
+    [7, -7],
+    [7, 7],
+    [0, -7],
+    [0, 7],
+    [-7, 0],
+    [7, 0]
+];
+
+function cust_highShow(ref) {
+    var index = act_pawns.map(e => e.obj).indexOf(ref.layerID);
+    var pos_X, pos_Y, k = 0;
+    pos_X = _stage.C6[act_pawns[index].position].offsetLeft;
+    pos_Y = _stage.C6[act_pawns[index].position].offsetTop;
+    for (var i = 0; i < 4; i++) {
+        if ((act_pawns[i].open == 1) && i != index) {
+            if (act_pawns[i].position == act_pawns[index].position) {
+                _stage.C7[act_pawns[i].obj].moveTo((pos_X + c_xyDelta[k][0]), (pos_Y + c_xyDelta[k][1]), 100, "ease-in");
+                _stage.C7[act_pawns[index].obj].moveTo((pos_X + c_xyDelta[3][0]), (pos_Y + c_xyDelta[3][1]), 100, "ease-in");
+                k++;
+            }
+        }
+    }
+    for (var x = 0; x < 4; x++) {
+        if ((act_pawns[index].position == ot_pawn1[x].position) && (ot_pawn1[x].open == 1)) {
+            _stage.C7[ot_pawn1[x].obj].moveTo((pos_X + c_xyDelta[k][0]), (pos_Y + c_xyDelta[k][1]), 100, "ease-in");
+            _stage.C7[act_pawns[index].obj].moveTo((pos_X + c_xyDelta[3][0]), (pos_Y + c_xyDelta[3][1]), 100, "ease-in");
+            k++;
+        }
+        if ((act_pawns[index].position == ot_pawn2[x].position) && (ot_pawn2[x].open == 1)) {
+            _stage.C7[ot_pawn2[x].obj].moveTo((pos_X + c_xyDelta[k][0]), (pos_Y + c_xyDelta[k][1]), 100, "ease-in");
+            _stage.C7[act_pawns[index].obj].moveTo((pos_X + c_xyDelta[3][0]), (pos_Y + c_xyDelta[3][1]), 100, "ease-in");
+            k++;
+        }
+        if ((act_pawns[index].position == ot_pawn3[x].position) && (ot_pawn3[x].open == 1)) {
+            _stage.C7[ot_pawn3[x].obj].moveTo((pos_X + c_xyDelta[k][0]), (pos_Y + c_xyDelta[k][1]), 100, "ease-in");
+            _stage.C7[act_pawns[index].obj].moveTo((pos_X + c_xyDelta[3][0]), (pos_Y + c_xyDelta[3][1]), 100, "ease-in");
+            k++;
+        }
+    }
+}
+//end...
+
+//Display Result related code Start
+var p1_result = ["B39", "B40", "B41", "B42", "B43"];
+var p2_result = ["B44", "B45", "B46", "B47", "B48"];
+var p3_result = ["B49", "B50", "B51", "B52", "B53"];
+var p4_result = ["B54", "B55", "B56", "B57", "B58"];
+var p1_per, p2_per, p3_per, p4_per;
+
+function cust_showResult(ref) {
+    if (c_maxPlayer == 2) {
+        p1_per = _stage.C10.L6.getContent();
+        p2_per = _stage.C10.L7.getContent();
+        _stage.C11.goToLabel("noofplayer2");
+    } else if (c_maxPlayer == 4) {
+        p1_per = _stage.C12.L8.getContent();
+        p2_per = _stage.C12.L9.getContent();
+        p3_per = _stage.C12.L13.getContent();
+        p4_per = _stage.C12.L14.getContent();
+        _stage.C11.goToLabel("noofplayer4");
+    }
+    if (c_sn == 1) p1_per = "100";
+    if (c_sn == 2) p2_per = "100";
+    if (c_sn == 3) p3_per = "100";
+    if (c_sn == 4) p4_per = "100";
+    cust_showStars(ref);
+}
+
+function cust_showStars(ref) {
+    var num_stars;
+    for (var i = 0; i < 4; i++) {
+        if (c_selectColor[i].isUse == "Yes") {
+            if (c_selectColor[i].sno == 1) {
+                ref.i88.swapImage(c_selectColor[i].tvColor + '1');
+                ref.i89.swapImage(c_selectColor[i].avatarName);
+                if (c_cor_ans_p1 !== 0) {
+                    p1_per = parseInt(p1_per);
+                    num_stars = p1_per / 20;
+                    num_stars = Math.round(num_stars);
+                    f_log("Player 1 per = " + p1_per + ", star show count = " + num_stars);
+                    for (var p = 0; p < num_stars; p++) {
+                        _stage.C11[p1_result[p]].select();
+                    }
+                }
+            }
+            if (c_selectColor[i].sno == 2) {
+                ref.i90.swapImage(c_selectColor[i].tvColor + '2');
+                ref.i91.swapImage(c_selectColor[i].avatarName);
+                if (c_cor_ans_p2 !== 0) {
+                    p2_per = parseInt(p2_per)
+                    num_stars = p2_per / 20;
+                    num_stars = Math.round(num_stars);
+                    f_log("Player 2 per = " + p2_per + ", star show count = " + num_stars);
+                    for (var j = 0; j < num_stars; j++) {
+                        _stage.C11[p2_result[j]].select();
+                    }
+                }
+            }
+            if (c_selectColor[i].sno == 3) {
+                ref.i94.swapImage(c_selectColor[i].tvColor + '3');
+                ref.i95.swapImage(c_selectColor[i].avatarName);
+                if (c_cor_ans_p3 !== 0) {
+                    p3_per = parseInt(p3_per)
+                    num_stars = p3_per / 20;
+                    num_stars = Math.round(num_stars);
+                    for (var k = 0; k < num_stars; k++) {
+                        _stage.C11[p3_result[k]].select();
+                    }
+                }
+            }
+            if (c_selectColor[i].sno == 4) {
+                ref.i92.swapImage(c_selectColor[i].tvColor + '4');
+                ref.i93.swapImage(c_selectColor[i].avatarName);
+                if (c_cor_ans_p4 !== 0) {
+                    p4_per = parseInt(p4_per)
+                    num_stars = p4_per / 20;
+                    num_stars = Math.round(num_stars);
+                    for (var l = 0; l < num_stars; l++) {
+                        _stage.C11[p4_result[l]].select();
+                    }
+                }
+            }
+        }
+    }
+}
+//end...
